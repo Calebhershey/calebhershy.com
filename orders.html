@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>My Orders - Grazin Acres</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2e8b57;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #2e8b57;
+      padding: 10px 20px;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header-buttons button {
+      background: white;
+      color: #2e8b57;
+      border: none;
+      padding: 8px 16px;
+      margin-left: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .header-buttons button:hover {
+      background: #e0e0e0;
+    }
+    .content {
+      margin-top: 100px;
+      padding: 20px;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .member-dashboard {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    .member-dashboard h2 {
+      color: #2e8b57;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .dashboard-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .dashboard-links a {
+      background: #2e8b57;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .dashboard-links a:hover {
+      background: #256b45;
+    }
+    .orders-container {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .orders-container h2 {
+      color: #2e8b57;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .order-item {
+      border: 1px solid #ddd;
+      margin: 15px 0;
+      padding: 20px;
+      border-radius: 6px;
+      background: #f9f9f9;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .order-status {
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-confirmed {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-delivered {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    .cart-items {
+      margin-top: 10px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .no-orders {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 40px 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <a href="Grazin Acres.html" style="display: flex; align-items: center; gap: 15px; text-decoration: none; color: white;">
+        <img src="Logo.jpeg" alt="Grazin Acres Logo" style="height: 50px; width: auto; border-radius: 8px;">
+        <span style="font-size: 1.5em; font-weight: bold;">Grazin Acres</span>
+      </a>
+      <div class="header-buttons">
+        <button onclick="location.href='shopping.html'">Shopping</button>
+        <button onclick="location.href='About.html'">About</button>
+        <button onclick="location.href='contact.html'">Contact</button>
+        <button onclick="location.href='orders.html'" style="background: #256b45; color: white;">My Orders</button>
+        <button onclick="logout()" style="background: #dc3545; color: white;">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="member-dashboard">
+      <h2>Member Dashboard</h2>
+      <div id="member-info">
+        <!-- Member info will be populated here -->
+      </div>
+      <div class="dashboard-links">
+        <a href="shopping.html">Shop Products</a>
+        <a href="member-agreement.html">View My Agreement</a>
+        <a href="cart.html">My Cart</a>
+        <a href="contact.html">Contact Support</a>
+      </div>
+    </div>
+
+    <div class="orders-container">
+      <h2>My Order History</h2>
+      <div id="orders">
+        <div class="no-orders">Loading your orders...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function checkAuthentication() {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!loggedInUser && !authToken) {
+        alert('Please log in to view your orders.');
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userProfile');
+      localStorage.removeItem('currentUserId');
+      alert('You have been logged out successfully.');
+      window.location.href = 'login.html';
+    }
+
+    function loadMemberInfo() {
+      const userProfile = localStorage.getItem('userProfile');
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      
+      if (userProfile) {
+        try {
+          const profile = JSON.parse(userProfile);
+          document.getElementById('member-info').innerHTML = `
+            <p><strong>Welcome back, ${profile.fullName || profile.firstName || loggedInUser}!</strong></p>
+            <p>Member Type: ${profile.memberType || 'Individual'} | Member Since: ${new Date(profile.createdAt).toLocaleDateString()}</p>
+          `;
+        } catch (error) {
+          document.getElementById('member-info').innerHTML = `
+            <p><strong>Welcome back, ${loggedInUser}!</strong></p>
+          `;
+        }
+      } else {
+        document.getElementById('member-info').innerHTML = `
+          <p><strong>Welcome back, ${loggedInUser}!</strong></p>
+        `;
+      }
+    }
+
+    function loadOrders() {
+      const userId = localStorage.getItem('userId');
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      
+      fetch('http://localhost:3000/orders')
+        .then(res => res.json())
+        .then(orders => {
+          const container = document.getElementById('orders');
+          
+          // Filter orders for the current user
+          const userOrders = orders.filter(order => 
+            order.userId === userId || 
+            order.username === loggedInUser ||
+            order.email === (JSON.parse(localStorage.getItem('userProfile') || '{}')).email
+          );
+          
+          if (userOrders.length === 0) {
+            container.innerHTML = `
+              <div class="no-orders">
+                <p>You haven't placed any orders yet.</p>
+                <p><a href="shopping.html" style="color: #2e8b57; text-decoration: none; font-weight: bold;">Start shopping now →</a></p>
+              </div>
+            `;
+            return;
+          }
+          
+          container.innerHTML = '';
+          userOrders.reverse().forEach((order, index) => {
+            const orderDiv = document.createElement('div');
+            orderDiv.className = 'order-item';
+            
+            const orderDate = new Date(order.date).toLocaleDateString();
+            const orderId = order.id || `ORD${Date.now() - index}`;
+            const status = order.status || 'confirmed';
+            
+            orderDiv.innerHTML = `
+              <div class="order-header">
+                <div>
+                  <strong>Order #${orderId}</strong>
+                  <div style="color: #666; font-size: 0.9em;">${orderDate}</div>
+                </div>
+                <div class="order-status status-${status}">
+                  ${status.charAt(0).toUpperCase() + status.slice(1)}
+                </div>
+              </div>
+              <div>
+                <strong>Delivery Address:</strong> ${order.address || 'Not specified'}
+              </div>
+              <div class="cart-items">
+                <strong>Items Ordered:</strong>
+                ${order.cart && order.cart.length > 0 ? 
+                  order.cart.map(item => `
+                    <div class="cart-item">
+                      <span>${item.name || 'Product'} x ${item.quantity || 1}</span>
+                      <span>$${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                    </div>
+                  `).join('') :
+                  '<div style="color: #666; font-style: italic;">No items specified</div>'
+                }
+                ${order.cart && order.cart.length > 0 ? `
+                  <div class="cart-item" style="font-weight: bold; border-top: 2px solid #2e8b57; margin-top: 10px; padding-top: 10px;">
+                    <span>Total</span>
+                    <span>$${order.cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0).toFixed(2)}</span>
+                  </div>
+                ` : ''}
+              </div>
+            `;
+            
+            container.appendChild(orderDiv);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading orders:', error);
+          document.getElementById('orders').innerHTML = `
+            <div class="no-orders" style="color: #d00;">
+              Unable to load orders. Please try again later.
+            </div>
+          `;
+        });
+    }
+
+    // Initialize page
+    window.onload = function() {
+      if (checkAuthentication()) {
+        loadMemberInfo();
+        loadOrders();
+      }
+    };
+  </script>
+</body>
+</html>

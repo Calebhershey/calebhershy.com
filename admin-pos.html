@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>POS System - Grazin Acres Admin</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .access-denied {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f5f5f5;
+      flex-direction: column;
+    }
+    .access-denied-card {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 400px;
+    }
+    .sidebar {
+      width: 250px;
+      background: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      margin-bottom: 20px;
+    }
+    .sidebar-header .back-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+    .sidebar-header .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar-menu li {
+      margin: 0;
+    }
+    .sidebar-menu a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      transition: background 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    .content-header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .pos-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 20px;
+      height: calc(100vh - 140px);
+    }
+    .products-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .section-header {
+      background: #2e8b57;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px 8px 0 0;
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .category-filter {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      min-width: 150px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+    }
+    .product-card {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .product-card:hover {
+      background: #e9ecef;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .product-card.out-of-stock {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .product-card.out-of-stock:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .product-image {
+      width: 60px;
+      height: 60px;
+      background: #2e8b57;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+    }
+    .product-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #2e8b57;
+      font-size: 0.9em;
+    }
+    .product-price {
+      color: #666;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    .product-stock {
+      font-size: 0.8em;
+      color: #666;
+      margin-top: 5px;
+    }
+    .weight-badge {
+      background: #ff6b35;
+      color: white;
+      font-size: 0.7em;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+    .weight-input-group {
+      margin: 20px 0;
+    }
+    .weight-input-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .weight-input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1.1em;
+      text-align: center;
+    }
+    .weight-buttons {
+      margin: 10px 0;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .weight-btn {
+      padding: 8px 15px;
+      border: 1px solid #2e8b57;
+      background: white;
+      color: #2e8b57;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .weight-btn:hover {
+      background: #2e8b57;
+      color: white;
+    }
+    .price-preview {
+      text-align: center;
+      margin: 15px 0;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      font-size: 1.2em;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .cart-section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .cart-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    .item-info {
+      flex: 1;
+    }
+    .item-name {
+      font-weight: bold;
+      color: #2e8b57;
+      margin-bottom: 5px;
+    }
+    .item-price {
+      color: #666;
+      font-size: 0.9em;
+    }
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .qty-btn {
+      background: #2e8b57;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qty-btn:hover {
+      background: #256b45;
+    }
+    .qty-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .quantity {
+      font-weight: bold;
+      min-width: 30px;
+      text-align: center;
+    }
+    .item-total {
+      font-weight: bold;
+      color: #2e8b57;
+      margin-left: 10px;
+    }
+    .remove-item {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+    }
+    .remove-item:hover {
+      background: #c82333;
+    }
+    .cart-summary {
+      background: #f8f9fa;
+      padding: 20px;
+      border-top: 2px solid #2e8b57;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .summary-row.total {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #2e8b57;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+    .checkout-section {
+      padding: 20px;
+      background: #f8f9fa;
+      border-top: 1px solid #ddd;
+    }
+    .payment-methods {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .payment-btn {
+      padding: 15px;
+      border: 2px solid #2e8b57;
+      background: white;
+      color: #2e8b57;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .payment-btn:hover, .payment-btn.active {
+      background: #2e8b57;
+      color: white;
+    }
+    .customer-section {
+      margin-bottom: 20px;
+    }
+    .customer-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .customer-suggestions {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      max-height: 150px;
+      overflow-y: auto;
+      position: absolute;
+      width: 360px;
+      z-index: 100;
+      display: none;
+    }
+    .customer-suggestion {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+    .customer-suggestion:hover {
+      background: #f8f9fa;
+    }
+    .customer-member-info {
+      font-size: 0.7em;
+      color: #999;
+      margin-top: 3px;
+    }
+    .member-info {
+      background: #e3f2fd;
+      padding: 8px;
+      border-radius: 4px;
+      border-left: 3px solid #2196f3;
+    }
+    .checkout-btn {
+      width: 100%;
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .checkout-btn:hover {
+      background: #218838;
+    }
+    .checkout-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .action-btn {
+      width: 100%;
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .action-btn:hover {
+      background: #5a6268;
+    }
+    .empty-cart {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+      font-style: italic;
+    }
+    .receipt-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* Weight modal should be above barcode scanner */
+    #weight-modal {
+      z-index: 2500;
+    }
+    .receipt-content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .receipt-header {
+      text-align: center;
+      border-bottom: 2px solid #2e8b57;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    .receipt-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .receipt-total {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #2e8b57;
+      border-top: 2px solid #2e8b57;
+      padding-top: 10px;
+      margin-top: 15px;
+    }
+    .receipt-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      flex: 1;
+    }
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    .btn-warning {
+      background: #ffc107;
+      color: #212529;
+    }
+    .barcode-scanner {
+      background: #2e8b57;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      min-width: 140px;
+      font-size: 0.9em;
+      transition: all 0.2s;
+    }
+    .barcode-scanner:hover {
+      background: #256b45;
+    }
+    .scanner-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    .scanner-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+    }
+    .scanner-video {
+      width: 100%;
+      max-width: 400px;
+      height: 300px;
+      border: 2px solid #2e8b57;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .scanner-overlay {
+      position: relative;
+      display: inline-block;
+    }
+    .scanner-line {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: #ff0000;
+      transform: translateY(-50%);
+      animation: scan 2s linear infinite;
+    }
+    @keyframes scan {
+      0% { top: 10%; }
+      100% { top: 90%; }
+    }
+    .barcode-input-section {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 1px solid #dee2e6;
+    }
+    .barcode-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #2e8b57;
+      border-radius: 4px;
+      font-size: 1.1em;
+      font-family: monospace;
+      text-align: center;
+    }
+    @media (max-width: 1200px) {
+      .pos-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+      }
+      .cart-section {
+        max-height: 400px;
+      }
+    }
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        padding: 10px;
+      }
+      .sidebar {
+        display: none;
+      }
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Access Control Check -->
+  <div id="access-check" class="access-denied" style="display: none;">
+    <div class="access-denied-card">
+      <h2 style="color: #dc3545; margin-bottom: 20px;">🔒 Access Denied</h2>
+      <p style="color: #666; margin-bottom: 20px;">You need admin privileges to access the POS system.</p>
+      <button onclick="window.location.href='Grazin Acres.html'" style="background: #2e8b57; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Go to Main Site</button>
+      <button onclick="window.location.href='login.html'" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer;">Login</button>
+    </div>
+  </div>
+
+  <div id="admin-content" class="admin-layout" style="display: none;">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>Grazin Acres</h2>
+        <p>POS System</p>
+        <div id="admin-user-info" style="font-size: 0.9em; opacity: 0.8; margin: 10px 0;"></div>
+        <button class="back-btn" onclick="window.location.href='admin-database.html'">← Back to Admin Dashboard</button>
+        <button class="back-btn" onclick="window.location.href='Grazin Acres.html'">← Main Site</button>
+        <button class="back-btn" onclick="logoutAdmin()" style="background: #dc3545; margin-top: 5px;">🔒 Logout Admin</button>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#" onclick="showSection('pos', this)" class="active">🛒 Point of Sale</a></li>
+        <li><a href="#" onclick="showSection('sales-history', this)">📊 Sales History</a></li>
+        <li><a href="#" onclick="showSection('inventory', this)">📦 Inventory</a></li>
+        <li><a href="#" onclick="showSection('reports', this)">📈 Reports</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="content-header">
+        <h1>POS System</h1>
+        <p>Process in-person sales and manage transactions</p>
+      </div>
+
+      <!-- POS Interface -->
+      <div class="pos-layout">
+        <!-- Products Section -->
+        <div class="products-section">
+          <div class="section-header">
+            <h2>Products</h2>
+            <div>
+              <span id="products-count">0 items</span>
+            </div>
+          </div>
+          <div class="section-content">
+            <div class="search-bar">
+              <input type="text" class="search-input" id="product-search" placeholder="Search products...">
+              <select class="category-filter" id="category-filter">
+                <option value="">All Categories</option>
+                <option value="produce">Fresh Produce</option>
+                <option value="dairy">Dairy Products</option>
+                <option value="meat">Meat & Poultry</option>
+                <option value="pantry">Pantry Items</option>
+                <option value="prepared">Prepared Foods</option>
+              </select>
+              <button class="btn" id="barcode-scan-btn" onclick="posSystem.startBarcodeScanning()">📷 Scan Barcode</button>
+            </div>
+            <div class="products-grid" id="products-grid">
+              <!-- Products will be loaded here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Cart Section -->
+        <div class="cart-section">
+          <div class="section-header">
+            <h2>Shopping Cart</h2>
+            <div>
+              <span id="cart-count">0 items</span>
+            </div>
+          </div>
+          <div class="cart-content" id="cart-content">
+            <div class="empty-cart">
+              <p>🛒 Cart is empty</p>
+              <p>Add products to start a sale</p>
+            </div>
+          </div>
+          <div class="cart-summary" id="cart-summary" style="display: none;">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Tax (8.25%):</span>
+              <span id="tax">$0.00</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span id="total">$0.00</span>
+            </div>
+          </div>
+          <div class="checkout-section">
+            <div class="customer-section">
+              <input type="text" class="customer-input" id="customer-search" placeholder="Search members by name or phone...">
+              <div class="customer-suggestions" id="customer-suggestions"></div>
+              <input type="email" class="customer-input" id="customer-email" placeholder="Member email (auto-filled)">
+              <div class="member-info" style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                💡 Only existing members can make purchases. Contact admin to add new members.
+              </div>
+            </div>
+            <div class="payment-methods">
+              <button class="payment-btn active" data-method="cash">💵 Cash</button>
+              <button class="payment-btn" data-method="card">💳 Card</button>
+            </div>
+            <button class="checkout-btn" id="checkout-btn" disabled>Complete Sale</button>
+            <button class="action-btn" onclick="clearCart()">Clear Cart</button>
+            <button class="action-btn" onclick="holdTransaction()">Hold Transaction</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weight Modal -->
+  <div id="weight-modal" class="receipt-modal">
+    <div class="receipt-content">
+      <div id="weight-modal-content">
+        <!-- Content will be generated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt Modal -->
+  <div id="receipt-modal" class="receipt-modal">
+    <div class="receipt-content">
+      <div class="receipt-header">
+        <h2>🌱 Grazin Acres</h2>
+        <p>Farm Fresh Products</p>
+        <p>Receipt #<span id="receipt-number"></span></p>
+        <p id="receipt-date"></p>
+      </div>
+      <div id="receipt-content">
+        <!-- Receipt content will be generated by JavaScript -->
+      </div>
+      <div class="receipt-actions">
+        <button class="btn btn-primary" onclick="posSystem.printReceipt()">🖨️ Print</button>
+        <button class="btn btn-success" onclick="posSystem.emailReceipt()">📧 Email</button>
+        <button class="btn btn-secondary" onclick="posSystem.closeReceiptModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barcode Scanner Modal -->
+  <div id="barcode-scanner-modal" class="scanner-modal">
+    <div class="scanner-content">
+      <h3>📷 Barcode Scanner</h3>
+      <p>Position the barcode within the scanner area</p>
+      
+      <div class="scanner-overlay">
+        <video id="scanner-video" class="scanner-video" autoplay muted playsinline></video>
+        <div class="scanner-line"></div>
+      </div>
+      
+      <div class="barcode-input-section">
+        <label for="manual-barcode">Or enter barcode manually:</label>
+        <input type="text" id="manual-barcode" class="barcode-input" placeholder="Scan or type barcode here..." autofocus>
+        <button class="btn btn-primary" onclick="posSystem.processManualBarcode()" style="margin-top: 10px;">Add Product</button>
+      </div>
+      
+      <div id="scanner-status" style="margin: 10px 0; font-weight: bold; color: #2e8b57;"></div>
+      
+      <div style="margin-top: 20px;">
+        <button class="btn btn-secondary" onclick="closeBarcodeScanner()">Close Scanner</button>
+        <button class="btn btn-warning" onclick="posSystem.switchCamera()" id="switch-camera-btn" style="display: none;">🔄 Switch Camera</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check admin access before loading the page
+    function checkAdminAccess() {
+      const isAdminAuthenticated = localStorage.getItem('adminAuthenticated');
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      
+      if (!isAdminAuthenticated || !loggedInUser) {
+        document.getElementById('access-check').style.display = 'flex';
+        document.getElementById('admin-content').style.display = 'none';
+        return false;
+      }
+      
+      document.getElementById('access-check').style.display = 'none';
+      document.getElementById('admin-content').style.display = 'flex';
+      
+      // Show admin user info
+      const adminUser = localStorage.getItem('adminUser') || localStorage.getItem('loggedInUser');
+      const adminUserInfo = document.getElementById('admin-user-info');
+      if (adminUserInfo && adminUser) {
+        adminUserInfo.textContent = `Logged in as: ${adminUser}`;
+      }
+      
+      return true;
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('adminAuthenticated');
+      localStorage.removeItem('adminUser');
+      alert('Admin session ended.');
+      window.location.href = 'Grazin Acres.html';
+    }
+
+    function showSection(section, element) {
+      // Handle sidebar navigation
+      console.log(`Navigating to section: ${section}`);
+      
+      // Update active menu item
+      document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.classList.remove('active');
+      });
+      
+      // Add active class to clicked item
+      if (element) {
+        element.classList.add('active');
+      }
+      
+      switch(section) {
+        case 'pos':
+          // Already on POS page - just scroll to top
+          window.scrollTo(0, 0);
+          break;
+        case 'sales-history':
+          alert('Sales History feature coming soon!\n\nThis will show:\n• Transaction history\n• Member purchase records\n• Payment method breakdown\n• Daily/weekly/monthly reports');
+          break;
+        case 'inventory':
+          alert('Inventory Management feature coming soon!\n\nThis will show:\n• Current stock levels\n• Low stock alerts\n• Inventory adjustments\n• Product performance');
+          break;
+        case 'reports':
+          alert('Reports feature coming soon!\n\nThis will show:\n• Sales analytics\n• Member insights\n• Popular products\n• Revenue trends');
+          break;
+        default:
+          console.log('Unknown section:', section);
+      }
+    }
+
+    // Check access on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      if (checkAdminAccess()) {
+        // POS system will be initialized by admin-pos.js
+        console.log('Admin access granted, POS system will initialize');
+      }
+    });
+  </script>
+  <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
+  <script src="admin-pos.js"></script>
+</body>
+</html>

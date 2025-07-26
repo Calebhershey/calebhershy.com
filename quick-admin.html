@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Admin Login - Grazin Acres</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #2e8b57;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .admin-login {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            width: 400px;
+            text-align: center;
+        }
+        .admin-login h2 {
+            color: #2e8b57;
+            margin-bottom: 20px;
+        }
+        .credentials {
+            background: #f0f8f0;
+            border: 1px solid #2e8b57;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .btn {
+            background: #2e8b57;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: #228B45;
+        }
+        .btn-alt {
+            background: #007bff;
+        }
+        .btn-alt:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login">
+        <h2>🔑 Quick Admin Access</h2>
+        <p>Click the button below to gain immediate admin access to Grazin Acres:</p>
+        
+        <div class="credentials">
+            <strong>Admin Credentials:</strong><br>
+            <strong>Username:</strong> admin<br>
+            <strong>Password:</strong> admin123<br><br>
+            <em>OR</em><br><br>
+            <strong>Username:</strong> calebhershey<br>
+            <strong>Password:</strong> grazin2025
+        </div>
+        
+        <button class="btn" onclick="quickAdminLogin()">🚀 Quick Admin Login</button>
+        <br>
+        <button class="btn btn-alt" onclick="goToRegularLogin()">👤 Regular Login</button>
+        <br>
+        <button class="btn" onclick="goToHome()" style="background: #6c757d;">🏠 Go to Main Site</button>
+        
+        <div id="status" style="margin-top: 20px; color: #2e8b57; font-weight: bold;"></div>
+    </div>
+
+    <script>
+        function quickAdminLogin() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = 'Setting up admin access...';
+            
+            // Set all required localStorage items for admin access
+            localStorage.setItem('loggedInUser', 'admin');
+            localStorage.setItem('authToken', 'admin-authenticated');
+            localStorage.setItem('adminAuthenticated', 'true');
+            localStorage.setItem('adminUser', 'admin');
+            localStorage.setItem('userId', '1');
+            localStorage.setItem('userProfile', JSON.stringify({
+                fullName: 'Administrator',
+                email: 'admin@grazinacres.com',
+                memberType: 'admin',
+                createdAt: new Date().toISOString()
+            }));
+            
+            statusDiv.textContent = '✅ Admin access granted! Redirecting...';
+            statusDiv.style.color = '#28a745';
+            
+            setTimeout(() => {
+                window.location.href = 'admin-database.html';
+            }, 1500);
+        }
+        
+        function goToRegularLogin() {
+            window.location.href = 'login.html';
+        }
+        
+        function goToHome() {
+            window.location.href = 'Grazin Acres.html';
+        }
+        
+        // Check if already logged in
+        window.onload = function() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            const adminAuth = localStorage.getItem('adminAuthenticated');
+            
+            if (loggedInUser && adminAuth) {
+                document.getElementById('status').innerHTML = `
+                    <p style="color: #28a745;">✅ Already logged in as: <strong>${loggedInUser}</strong></p>
+                    <button class="btn" onclick="window.location.href='admin-database.html'">Go to Admin Database</button>
+                    <button class="btn" onclick="logout()" style="background: #dc3545;">Logout</button>
+                `;
+            }
+        };
+        
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>

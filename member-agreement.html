@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>My Membership Agreement - Grazin Acres</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2e8b57;
+      padding: 20px 0;
+      min-height: 100vh;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #2e8b57;
+      padding: 10px 20px;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header-buttons button {
+      background: white;
+      color: #2e8b57;
+      border: none;
+      padding: 8px 16px;
+      margin-left: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .header-buttons button:hover {
+      background: #e0e0e0;
+    }
+    .agreement-container {
+      background: #fff;
+      padding: 32px 28px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 800px;
+      margin: 100px auto 20px auto;
+    }
+    .agreement-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #2e8b57;
+    }
+    .agreement-header h1 {
+      color: #2e8b57;
+      margin-bottom: 10px;
+    }
+    .member-info {
+      background: #f0fff0;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      border-left: 4px solid #2e8b57;
+    }
+    .member-info h3 {
+      color: #2e8b57;
+      margin-top: 0;
+    }
+    .agreement-text {
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    .agreement-text h4 {
+      color: #2e8b57;
+      margin-top: 25px;
+      margin-bottom: 10px;
+    }
+    .signature-section {
+      border-top: 2px solid #2e8b57;
+      padding-top: 20px;
+      text-align: center;
+    }
+    .signature-display {
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+      margin: 15px auto;
+      max-width: 400px;
+      padding: 10px;
+    }
+    .signature-image {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .download-btn {
+      background: #2e8b57;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px;
+      transition: background 0.2s;
+    }
+    .download-btn:hover {
+      background: #256b45;
+    }
+    .error-message {
+      color: #d00;
+      background: #ffe6e6;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <a href="Grazin Acres.html" style="display: flex; align-items: center; gap: 15px; text-decoration: none; color: white;">
+        <img src="Logo.jpeg" alt="Grazin Acres Logo" style="height: 50px; width: auto; border-radius: 8px;">
+        <span style="font-size: 1.5em; font-weight: bold;">Grazin Acres</span>
+      </a>
+      <div class="header-buttons">
+        <button onclick="location.href='shopping.html'">Shopping</button>
+        <button onclick="location.href='About.html'">About</button>
+        <button onclick="location.href='contact.html'">Contact</button>
+        <button onclick="location.href='orders.html'">My Orders</button>
+        <button onclick="logout()" style="background: #dc3545; color: white;">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="agreement-container">
+    <div class="agreement-header">
+      <h1>My Membership Agreement</h1>
+      <p style="color: #666;">Your signed agreement with Grazin Acres</p>
+    </div>
+
+    <div id="member-info" class="member-info">
+      <!-- Member information will be populated here -->
+    </div>
+
+    <div id="error-message" class="error-message" style="display: none;">
+      Unable to load your membership agreement. Please contact support.
+    </div>
+
+    <div id="agreement-content" style="display: none;">
+      <div class="agreement-text">
+        <h4>GRAZIN ACRES MEMBERSHIP AGREEMENT</h4>
+        
+        <p><strong>1. MEMBERSHIP TERMS</strong><br>
+        By joining Grazin Acres, you agree to become a member of our farm community with the following responsibilities and benefits:</p>
+        
+        <p><strong>2. PRODUCT QUALITY & SAFETY</strong><br>
+        - All products are farm-fresh and locally sourced<br>
+        - Members acknowledge that farm products have natural variations<br>
+        - Grazin Acres maintains high standards for food safety and quality<br>
+        - Members agree to inspect products upon delivery</p>
+        
+        <p><strong>3. ORDERING & DELIVERY</strong><br>
+        - Orders must be placed through our members-only platform<br>
+        - Delivery schedules are subject to weather and farm conditions<br>
+        - Members agree to be available for scheduled deliveries<br>
+        - Cancellation policy: 24-hour notice required</p>
+        
+        <p><strong>4. PAYMENT TERMS</strong><br>
+        - Payment is due upon order confirmation<br>
+        - Membership fees are non-refundable<br>
+        - Price adjustments may occur based on seasonal availability</p>
+        
+        <p><strong>5. FARM COMMUNITY STANDARDS</strong><br>
+        - Respect for farm operations and staff<br>
+        - Support for sustainable farming practices<br>
+        - Participation in community events when possible<br>
+        - Feedback and communication encouraged</p>
+        
+        <p><strong>6. LIABILITY & DISCLAIMERS</strong><br>
+        - Members participate at their own risk<br>
+        - Grazin Acres is not liable for allergic reactions<br>
+        - Members must disclose dietary restrictions and allergies<br>
+        - Force majeure events may affect product availability</p>
+        
+        <p><strong>7. PRIVACY & DATA</strong><br>
+        - Personal information is protected according to our privacy policy<br>
+        - Contact information may be used for farm-related communications<br>
+        - Members may opt-out of non-essential communications</p>
+        
+        <p><strong>8. TERMINATION</strong><br>
+        - Either party may terminate membership with 30-day notice<br>
+        - Violation of terms may result in immediate termination<br>
+        - Outstanding orders will be fulfilled upon termination</p>
+      </div>
+
+      <div class="signature-section">
+        <h4 style="color: #2e8b57; margin-bottom: 15px;">Digital Signature</h4>
+        <p style="margin-bottom: 15px;">
+          Your digital signature confirming acceptance of this agreement:
+        </p>
+        
+        <div class="signature-display">
+          <img id="signature-image" class="signature-image" alt="Your Digital Signature" style="display: none;">
+          <p id="no-signature" style="color: #666; font-style: italic;">No signature available</p>
+        </div>
+        
+        <div id="signature-info" style="margin-top: 15px; color: #666; font-size: 0.9em;">
+          <!-- Signature date will be populated here -->
+        </div>
+        
+        <button class="download-btn" onclick="downloadAgreement()">Download Agreement PDF</button>
+        <button class="download-btn" onclick="printAgreement()">Print Agreement</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function checkAuthentication() {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!loggedInUser && !authToken) {
+        alert('Please log in to view your membership agreement.');
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userProfile');
+      localStorage.removeItem('currentUserId');
+      alert('You have been logged out successfully.');
+      window.location.href = 'login.html';
+    }
+
+    function loadMembershipAgreement() {
+      const userProfile = localStorage.getItem('userProfile');
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      
+      if (!userProfile) {
+        document.getElementById('error-message').style.display = 'block';
+        return;
+      }
+
+      try {
+        const profile = JSON.parse(userProfile);
+        
+        // Populate member information
+        const memberInfoDiv = document.getElementById('member-info');
+        memberInfoDiv.innerHTML = `
+          <h3>Member Information</h3>
+          <p><strong>Name:</strong> ${profile.fullName || profile.firstName + ' ' + profile.lastName || loggedInUser}</p>
+          <p><strong>Email:</strong> ${profile.email || 'Not provided'}</p>
+          <p><strong>Membership Type:</strong> ${profile.memberType || 'Individual'}</p>
+          <p><strong>Member Since:</strong> ${new Date(profile.createdAt || profile.agreementDate).toLocaleDateString()}</p>
+          <p><strong>Agreement Status:</strong> <span style="color: #2e8b57; font-weight: bold;">✓ Signed & Active</span></p>
+        `;
+
+        // Show signature if available
+        if (profile.signature) {
+          document.getElementById('signature-image').src = profile.signature;
+          document.getElementById('signature-image').style.display = 'block';
+          document.getElementById('no-signature').style.display = 'none';
+          
+          const agreementDate = profile.agreementDate || profile.createdAt;
+          if (agreementDate) {
+            document.getElementById('signature-info').innerHTML = `
+              <p>Signed on: ${new Date(agreementDate).toLocaleString()}</p>
+              <p>IP Address: Recorded for security</p>
+            `;
+          }
+        }
+
+        document.getElementById('agreement-content').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        document.getElementById('error-message').style.display = 'block';
+      }
+    }
+
+    function downloadAgreement() {
+      // In a real implementation, this would generate a proper PDF
+      alert('PDF download feature would be implemented here. For now, you can print this page.');
+      printAgreement();
+    }
+
+    function printAgreement() {
+      // Hide navigation elements for printing
+      const header = document.querySelector('.header');
+      const downloadButtons = document.querySelectorAll('.download-btn');
+      
+      header.style.display = 'none';
+      downloadButtons.forEach(btn => btn.style.display = 'none');
+      
+      window.print();
+      
+      // Restore elements after printing
+      setTimeout(() => {
+        header.style.display = 'flex';
+        downloadButtons.forEach(btn => btn.style.display = 'inline-block');
+      }, 100);
+    }
+
+    // Initialize page
+    window.onload = function() {
+      if (checkAuthentication()) {
+        loadMembershipAgreement();
+      }
+    };
+  </script>
+</body>
+</html>

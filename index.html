@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Join Grazin Acres Community</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2e8b57;
+      padding: 20px 0;
+      min-height: 100vh;
+    }
+    .signup-container {
+      background: #fff;
+      padding: 32px 28px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .signup-container h2 {
+      color: #2e8b57;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .signup-container p {
+      color: #666;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .form-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #f9f9f9;
+    }
+    .form-section h3 {
+      color: #2e8b57;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.1em;
+    }
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-row .half {
+      flex: 1;
+    }
+    .signup-container input, .signup-container select, .signup-container textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+    .signup-container textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .agreement-section {
+      background: #fff;
+      padding: 20px;
+      border: 2px solid #2e8b57;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .agreement-text {
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.9em;
+      line-height: 1.4;
+      margin-bottom: 15px;
+    }
+    .signature-section {
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+    }
+    .signature-pad {
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      cursor: crosshair;
+      display: block;
+      margin: 10px 0;
+    }
+    .signature-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .signature-controls button {
+      padding: 8px 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+    }
+    .signature-controls button:hover {
+      background: #f0f0f0;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+      margin-top: 3px;
+    }
+    .checkbox-group label {
+      flex: 1;
+      font-size: 0.9em;
+      line-height: 1.4;
+    }
+    .signup-container button {
+      width: 100%;
+      background: #2e8b57;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 14px 0;
+      font-size: 1.1em;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .signup-container button:hover {
+      background: #256b45;
+    }
+    .signup-container button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .signup-message {
+      margin-top: 15px;
+      color: #2e8b57;
+      font-size: 1em;
+      text-align: center;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .error {
+      background: #ffe6e6;
+      color: #d00;
+      border: 1px solid #ffcccc;
+    }
+    .success {
+      background: #e6ffe6;
+      color: #2e8b57;
+      border: 1px solid #ccffcc;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+    }
+    .login-link a {
+      color: #2e8b57;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h2>Join the Grazin Acres Community</h2>
+    <p>Create your account to access our premium farm-fresh products</p>
+    
+    <form id="signup-form">
+      <!-- Account Information -->
+      <div class="form-section">
+        <h3>Account Information</h3>
+        <div class="form-row">
+          <div class="half">
+            <input type="text" id="signup-username" placeholder="Username *" required>
+          </div>
+          <div class="half">
+            <input type="email" id="signup-email" placeholder="Email Address *" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="half">
+            <input type="password" id="signup-password" placeholder="Password *" required>
+          </div>
+          <div class="half">
+            <input type="password" id="signup-confirm" placeholder="Confirm Password *" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Information -->
+      <div class="form-section">
+        <h3>Personal Information</h3>
+        <div class="form-row">
+          <div class="half">
+            <input type="text" id="signup-firstname" placeholder="First Name *" required>
+          </div>
+          <div class="half">
+            <input type="text" id="signup-lastname" placeholder="Last Name *" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="half">
+            <input type="tel" id="signup-phone" placeholder="Phone Number *" required>
+          </div>
+          <div class="half">
+            <input type="date" id="signup-birthdate" required>
+          </div>
+        </div>
+        <input type="text" id="signup-address" placeholder="Street Address *" required>
+        <div class="form-row">
+          <div class="half">
+            <input type="text" id="signup-city" placeholder="City *" required>
+          </div>
+          <div class="half">
+            <input type="text" id="signup-zipcode" placeholder="ZIP Code *" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Farm Interest -->
+      <div class="form-section">
+        <h3>Farm Community Interest</h3>
+        <select id="signup-membertype" required>
+          <option value="">Select Membership Type *</option>
+          <option value="individual">Individual Consumer</option>
+          <option value="family">Family Plan</option>
+          <option value="business">Business/Restaurant</option>
+          <option value="farmer">Local Farmer/Producer</option>
+        </select>
+        <textarea id="signup-interests" placeholder="Tell us about your interest in farm-fresh products and what you're looking for..."></textarea>
+        <div class="checkbox-group">
+          <input type="checkbox" id="newsletter-consent">
+          <label for="newsletter-consent">I would like to receive newsletters about new products, farm updates, and special offers</label>
+        </div>
+      </div>
+
+      <!-- Legal Agreement -->
+      <div class="agreement-section">
+        <h3 style="color: #2e8b57; margin-top: 0;">Membership Agreement & Terms</h3>
+        <div class="agreement-text" id="agreement-text">
+          <h4>GRAZIN ACRES MEMBERSHIP AGREEMENT</h4>
+          
+          <p><strong>1. MEMBERSHIP TERMS</strong><br>
+          By joining Grazin Acres, you agree to become a member of our farm community with the following responsibilities and benefits:</p>
+          
+          <p><strong>2. PRODUCT QUALITY & SAFETY</strong><br>
+          - All products are farm-fresh and locally sourced<br>
+          - Members acknowledge that farm products have natural variations<br>
+          - Grazin Acres maintains high standards for food safety and quality<br>
+          - Members agree to inspect products upon delivery</p>
+          
+          <p><strong>3. ORDERING & DELIVERY</strong><br>
+          - Orders must be placed through our members-only platform<br>
+          - Delivery schedules are subject to weather and farm conditions<br>
+          - Members agree to be available for scheduled deliveries<br>
+          - Cancellation policy: 24-hour notice required</p>
+          
+          <p><strong>4. PAYMENT TERMS</strong><br>
+          - Payment is due upon order confirmation<br>
+          - Membership fees are non-refundable<br>
+          - Price adjustments may occur based on seasonal availability</p>
+          
+          <p><strong>5. FARM COMMUNITY STANDARDS</strong><br>
+          - Respect for farm operations and staff<br>
+          - Support for sustainable farming practices<br>
+          - Participation in community events when possible<br>
+          - Feedback and communication encouraged</p>
+          
+          <p><strong>6. LIABILITY & DISCLAIMERS</strong><br>
+          - Members participate at their own risk<br>
+          - Grazin Acres is not liable for allergic reactions<br>
+          - Members must disclose dietary restrictions and allergies<br>
+          - Force majeure events may affect product availability</p>
+          
+          <p><strong>7. PRIVACY & DATA</strong><br>
+          - Personal information is protected according to our privacy policy<br>
+          - Contact information may be used for farm-related communications<br>
+          - Members may opt-out of non-essential communications</p>
+          
+          <p><strong>8. TERMINATION</strong><br>
+          - Either party may terminate membership with 30-day notice<br>
+          - Violation of terms may result in immediate termination<br>
+          - Outstanding orders will be fulfilled upon termination</p>
+        </div>
+        
+        <div class="signature-section">
+          <h4 style="color: #2e8b57; margin-bottom: 10px;">Digital Signature Required</h4>
+          <p style="margin-bottom: 15px; font-size: 0.9em;">
+            Please sign below to acknowledge that you have read, understood, and agree to the terms of this membership agreement:
+          </p>
+          
+          <div class="signature-controls">
+            <button type="button" id="clear-signature">Clear Signature</button>
+            <span style="font-size: 0.9em; color: #666; line-height: 32px;">Sign with your mouse or finger</span>
+          </div>
+          
+          <canvas id="signature-pad" class="signature-pad" width="540" height="150"></canvas>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="agreement-consent" required>
+            <label for="agreement-consent">
+              <strong>I hereby acknowledge that I have read and understood all terms of this membership agreement, and I agree to be bound by these terms. My digital signature above confirms my acceptance of this agreement.</strong>
+            </label>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="age-verification" required>
+            <label for="age-verification">I confirm that I am 18 years of age or older and legally able to enter into this agreement.</label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" id="submit-btn" disabled>Create My Grazin Acres Membership</button>
+    </form>
+    
+    <div class="signup-message" id="signup-message"></div>
+    
+    <div class="login-link">
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Signature pad functionality
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let hasSignature = false;
+
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // Touch events for mobile
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouch);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function startDrawing(e) {
+      isDrawing = true;
+      hasSignature = true;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      validateForm();
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#2e8b57';
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function handleTouch(e) {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                      e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      });
+      canvas.dispatchEvent(mouseEvent);
+    }
+
+    document.getElementById('clear-signature').addEventListener('click', function() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasSignature = false;
+      validateForm();
+    });
+
+    // Form validation
+    function validateForm() {
+      const requiredFields = [
+        'signup-username', 'signup-email', 'signup-password', 'signup-confirm',
+        'signup-firstname', 'signup-lastname', 'signup-phone', 'signup-birthdate',
+        'signup-address', 'signup-city', 'signup-zipcode', 'signup-membertype'
+      ];
+      
+      const agreementConsent = document.getElementById('agreement-consent').checked;
+      const ageVerification = document.getElementById('age-verification').checked;
+      
+      let allValid = true;
+      
+      // Check required fields
+      for (let fieldId of requiredFields) {
+        if (!document.getElementById(fieldId).value.trim()) {
+          allValid = false;
+          break;
+        }
+      }
+      
+      // Check checkboxes and signature
+      if (!agreementConsent || !ageVerification || !hasSignature) {
+        allValid = false;
+      }
+      
+      document.getElementById('submit-btn').disabled = !allValid;
+    }
+
+    // Add event listeners for form validation
+    document.querySelectorAll('input, select, textarea').forEach(element => {
+      element.addEventListener('input', validateForm);
+      element.addEventListener('change', validateForm);
+    });
+
+    // Form submission
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const messageDiv = document.getElementById('signup-message');
+      const username = document.getElementById('signup-username').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm').value;
+      const firstName = document.getElementById('signup-firstname').value.trim();
+      const lastName = document.getElementById('signup-lastname').value.trim();
+      const phone = document.getElementById('signup-phone').value.trim();
+      const birthdate = document.getElementById('signup-birthdate').value;
+      const address = document.getElementById('signup-address').value.trim();
+      const city = document.getElementById('signup-city').value.trim();
+      const zipcode = document.getElementById('signup-zipcode').value.trim();
+      const memberType = document.getElementById('signup-membertype').value;
+      const interests = document.getElementById('signup-interests').value.trim();
+      const newsletterConsent = document.getElementById('newsletter-consent').checked;
+
+      // Validation
+      if (password.length < 6) {
+        showMessage("Password must be at least 6 characters.", 'error');
+        return;
+      }
+      if (password !== confirm) {
+        showMessage("Passwords do not match.", 'error');
+        return;
+      }
+      if (!hasSignature) {
+        showMessage("Please provide your digital signature.", 'error');
+        return;
+      }
+
+      // Get signature as base64
+      const signatureData = canvas.toDataURL();
+
+      // Create comprehensive profile
+      const profile = {
+        username: username,
+        email: email,
+        fullName: `${firstName} ${lastName}`,
+        firstName: firstName,
+        lastName: lastName,
+        phone: phone,
+        birthdate: birthdate,
+        address: address,
+        city: city,
+        zipcode: zipcode,
+        memberType: memberType,
+        interests: interests,
+        newsletterConsent: newsletterConsent,
+        signature: signatureData,
+        agreementAccepted: true,
+        agreementDate: new Date().toISOString(),
+        ageVerified: true,
+        farmerType: memberType === 'farmer' ? 'farmer' : 'buyer',
+        createdAt: new Date().toISOString()
+      };
+
+      // Submit to server
+      fetch('http://localhost:3000/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, profile, status: 'pending' })
+      })
+      .then(async res => {
+        const data = await res.json();
+        if (res.ok) {
+          showMessage("Application submitted successfully! Your membership is pending admin approval. You will be notified when approved.", 'success');
+          
+          // Store pending application locally as backup
+          const pendingApplication = {
+            id: `pending_${Date.now()}`,
+            username: username,
+            profile: profile,
+            status: 'pending',
+            appliedAt: new Date().toISOString()
+          };
+          
+          let pendingApprovals = JSON.parse(localStorage.getItem('pending_approvals')) || [];
+          pendingApprovals.push(pendingApplication);
+          localStorage.setItem('pending_approvals', JSON.stringify(pendingApprovals));
+          
+          // Don't auto-login for pending accounts
+          setTimeout(() => {
+            showMessage("Thank you for applying! Please check your email for updates on your application status.", 'success');
+            setTimeout(() => window.location.href = 'Grazin Acres.html', 3000);
+          }, 2000);
+          
+        } else {
+          showMessage(data.message, 'error');
+        }
+      })
+      .catch(() => {
+        // If server is down, store locally
+        const pendingApplication = {
+          id: `pending_${Date.now()}`,
+          username: username,
+          profile: profile,
+          status: 'pending',
+          appliedAt: new Date().toISOString()
+        };
+        
+        let pendingApprovals = JSON.parse(localStorage.getItem('pending_approvals')) || [];
+        pendingApprovals.push(pendingApplication);
+        localStorage.setItem('pending_approvals', JSON.stringify(pendingApprovals));
+        
+        showMessage("Application submitted successfully! Your membership is pending admin approval. You will be notified when approved.", 'success');
+        setTimeout(() => window.location.href = 'Grazin Acres.html', 3000);
+      });
+    });
+
+    function showMessage(text, type) {
+      const messageDiv = document.getElementById('signup-message');
+      messageDiv.textContent = text;
+      messageDiv.className = `signup-message ${type}`;
+    }
+
+    // Initialize form validation
+    validateForm();
+  </script>
+</body>
+</html>

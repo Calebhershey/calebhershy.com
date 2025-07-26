@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2e8b57;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background: #fff;
+      padding: 32px 28px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .login-container h2 {
+      color: #2e8b57;
+      margin-bottom: 18px;
+    }
+    .login-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .login-container button {
+      width: 100%;
+      background: #2e8b57;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 0;
+      font-size: 1.1em;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    .login-container button:hover {
+      background: #256b45;
+    }
+    .login-message {
+      margin-top: 12px;
+      color: #2e8b57;
+      font-size: 1em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Members Login</h2>
+    <p style="color: #666; text-align: center; margin-bottom: 20px;">
+      Welcome to Grazin Acres - Members Only
+    </p>
+    
+    <!-- Admin Login Info -->
+    <div style="background: #f0f8f0; border: 1px solid #2e8b57; border-radius: 4px; padding: 15px; margin-bottom: 20px; font-size: 0.9em;">
+      <strong style="color: #2e8b57;">Admin Access:</strong><br>
+      Username: <code>admin</code> or <code>calebhershey</code><br>
+      Password: <code>admin123</code> or <code>grazin2025</code>
+    </div>
+    
+    <form id="login-form">
+      <input type="text" id="login-username" placeholder="Username" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <div class="login-message" id="login-message"></div>
+    <div style="text-align: center; margin-top: 20px; color: #666;">
+      <p>Don't have an account?</p>
+      <a href="index.html" style="color: #2e8b57; text-decoration: none; font-weight: bold;">Join Our Farm Community</a>
+    </div>
+  </div>
+  <script>
+    document.getElementById('login-form').onsubmit = function(e) {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const messageDiv = document.getElementById('login-message');
+
+      // Check for admin credentials first (offline fallback)
+      const adminUsers = ['admin', 'owner', 'manager', 'calebhershey'];
+      const adminPasswords = ['admin123', 'grazin2025', 'farmadmin', 'admin'];
+      
+      if (adminUsers.includes(username.toLowerCase()) && adminPasswords.includes(password)) {
+        messageDiv.textContent = "Admin login successful!";
+        messageDiv.style.color = "#2e8b57";
+        
+        // Set admin authentication
+        localStorage.setItem('loggedInUser', username);
+        localStorage.setItem('authToken', 'admin-authenticated');
+        localStorage.setItem('adminAuthenticated', 'true');
+        localStorage.setItem('adminUser', username);
+        
+        setTimeout(() => window.location.href = "Grazin Acres.html", 1000);
+        return;
+      }
+
+      // Try server authentication for regular users
+      fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(async res => {
+        const data = await res.json();
+        console.log('Login response:', data); // Debug log
+        if (res.ok) {
+          // Check if account is pending approval
+          if (data.status === 'pending') {
+            messageDiv.textContent = "Your membership application is pending admin approval. Please wait for approval notification.";
+            messageDiv.style.color = "#ffc107";
+            return;
+          }
+          
+          messageDiv.textContent = data.message;
+          messageDiv.style.color = "#2e8b57";
+          // Save logged-in user data
+          localStorage.setItem('loggedInUser', username);
+          localStorage.setItem('authToken', data.token || 'authenticated');
+          if (data.userId && data.profile) {
+            console.log('Storing userId:', data.userId); // Debug log
+            console.log('Storing profile:', data.profile); // Debug log
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('userProfile', JSON.stringify(data.profile));
+            
+            // Auto-grant admin access if username contains admin
+            if (username.toLowerCase().includes('admin') || username.toLowerCase().includes('owner')) {
+              localStorage.setItem('adminAuthenticated', 'true');
+              localStorage.setItem('adminUser', username);
+            }
+          } else {
+            console.log('Missing userId or profile in response'); // Debug log
+          }
+          // Redirect to home or dashboard
+          setTimeout(() => window.location.href = "Grazin Acres.html", 1000);
+        } else {
+          // Check if the error is due to pending status
+          if (data.message && data.message.includes('pending')) {
+            messageDiv.textContent = "Your membership application is pending admin approval. Please wait for approval notification.";
+            messageDiv.style.color = "#ffc107";
+          } else {
+            messageDiv.textContent = data.message;
+            messageDiv.style.color = "red";
+          }
+        }
+      })
+      .catch(() => {
+        // If server is down, try admin credentials as fallback
+        if (username.toLowerCase().includes('admin') || username.toLowerCase().includes('owner')) {
+          const fallbackPassword = prompt('Server unavailable. Enter admin password:');
+          if (adminPasswords.includes(fallbackPassword)) {
+            localStorage.setItem('loggedInUser', username);
+            localStorage.setItem('authToken', 'admin-offline');
+            localStorage.setItem('adminAuthenticated', 'true');
+            localStorage.setItem('adminUser', username);
+            messageDiv.textContent = "Admin login successful (offline mode)!";
+            messageDiv.style.color = "#2e8b57";
+            setTimeout(() => window.location.href = "Grazin Acres.html", 1000);
+            return;
+          }
+        }
+        messageDiv.textContent = "Server error. Please try again later.";
+        messageDiv.style.color = "red";
+      });
+    };
+
+    // Check if user is already logged in
+    function checkExistingLogin() {
+      const user = localStorage.getItem('loggedInUser');
+      const authToken = localStorage.getItem('authToken');
+      
+      if (user && authToken) {
+        // User is already logged in, show option to continue or logout
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.style.cssText = `
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(255,255,255,0.95);
+          color: #2e8b57;
+          padding: 15px 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          text-align: center;
+          z-index: 1000;
+          border: 2px solid #2e8b57;
+        `;
+        welcomeDiv.innerHTML = `
+          <p style="margin: 0 0 10px 0;"><strong>Already logged in as ${user}</strong></p>
+          <button onclick="continueToDashboard()" style="background: #2e8b57; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-right: 10px; cursor: pointer;">
+            Continue to Dashboard
+          </button>
+          <button onclick="logout()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+            Logout & Login as Different User
+          </button>
+        `;
+        document.body.appendChild(welcomeDiv);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userProfile');
+      localStorage.removeItem('currentUserId');
+      location.reload();
+    }
+
+    function continueToDashboard() {
+      window.location.href = 'Grazin Acres.html';
+    }
+
+    // Check for existing login on page load
+    window.addEventListener('load', checkExistingLogin);
+  </script>
+</body>
+</html>

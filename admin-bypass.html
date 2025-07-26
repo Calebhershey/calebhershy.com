@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Access        function goToAdmin() {
+            grantAdminAccess();
+            window.location.href = 'admin-database.html';
+        }
+
+        function goToPOS() {
+            grantAdminAccess();
+            window.location.href = 'admin-pos.html';
+        }
+
+        function goToMain() {
+            window.location.href = 'Grazin Acres.html';
+        }n Acres</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            background: #f5f5f5; 
+        }
+        .admin-access {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+        }
+        .btn {
+            background: #2e8b57;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: #228B45;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-access">
+        <h2>Admin Access</h2>
+        <p>Click the button below to gain admin access:</p>
+        <button class="btn" onclick="grantAdminAccess()">Grant Admin Access</button>
+        <br>
+        <button class="btn" onclick="goToAdmin()">Go to Admin Database</button>
+        <br>
+        <button class="btn" onclick="goToPOS()">Go to POS System</button>
+        <br>
+        <button class="btn" onclick="goToMain()">Go to Main Site</button>
+    </div>
+
+    <script>
+        function grantAdminAccess() {
+            localStorage.setItem('adminAuthenticated', 'true');
+            localStorage.setItem('loggedInUser', 'admin');
+            localStorage.setItem('adminUser', 'admin');
+            alert('Admin access granted! You can now access the admin database.');
+        }
+
+        function goToAdmin() {
+            grantAdminAccess();
+            window.location.href = 'admin-database.html';
+        }
+
+        function goToMain() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

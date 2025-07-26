@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Grazin Acres</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .admin-header {
+      background: #2e8b57;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .admin-section {
+      background: white;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .section-header {
+      background: #2e8b57;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px 8px 0 0;
+      margin: 0;
+      font-size: 1.2em;
+    }
+    .section-content {
+      padding: 20px;
+    }
+    .member-card {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: #f9f9f9;
+    }
+    .member-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .member-name {
+      font-weight: bold;
+      color: #2e8b57;
+      font-size: 1.1em;
+    }
+    .member-type {
+      background: #2e8b57;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+    }
+    .member-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .detail-item {
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .detail-label {
+      font-weight: bold;
+      color: #666;
+    }
+    .signature-preview {
+      max-width: 200px;
+      max-height: 80px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .signature-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .signature-modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      max-height: 400px;
+    }
+    .signature-full {
+      max-width: 100%;
+      max-height: 300px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .btn {
+      background: #2e8b57;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #256b45;
+    }
+    .btn-danger {
+      background: #dc3545;
+    }
+    .btn-danger:hover {
+      background: #c82333;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #2e8b57;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+    .order-item {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: #f9f9f9;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-confirmed { background: #d4edda; color: #155724; }
+    .status-delivered { background: #d1ecf1; color: #0c5460; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Grazin Acres - Admin Panel</h1>
+      <p>Manage members, view agreements, and monitor orders</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="admin-section">
+      <h2 class="section-header">Dashboard Statistics</h2>
+      <div class="section-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="total-members">0</div>
+            <div class="stat-label">Total Members</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="total-orders">0</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="signed-agreements">0</div>
+            <div class="stat-label">Signed Agreements</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="pending-orders">0</div>
+            <div class="stat-label">Pending Orders</div>
+          </div>
+        </div>
+        <button class="btn" onclick="refreshData()">Refresh Data</button>
+      </div>
+    </div>
+
+    <!-- Members Management -->
+    <div class="admin-section">
+      <h2 class="section-header">Members & Agreements</h2>
+      <div class="section-content">
+        <div id="members-list">
+          <p>Loading members...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Management -->
+    <div class="admin-section">
+      <h2 class="section-header">Recent Orders</h2>
+      <div class="section-content">
+        <div id="orders-list">
+          <p>Loading orders...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature Modal -->
+  <div id="signature-modal" class="signature-modal">
+    <div class="signature-modal-content">
+      <h3>Member Agreement Signature</h3>
+      <img id="signature-full" class="signature-full" alt="Member Signature">
+      <div style="margin-top: 15px;">
+        <button class="btn" onclick="closeSignatureModal()">Close</button>
+        <button class="btn" onclick="downloadSignature()">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSignatureData = null;
+
+    function loadMembers() {
+      fetch('http://localhost:3000/debug/users')
+        .then(res => res.json())
+        .then(users => {
+          const container = document.getElementById('members-list');
+          
+          if (users.length === 0) {
+            container.innerHTML = '<p>No members found.</p>';
+            return;
+          }
+
+          container.innerHTML = '';
+          users.forEach(user => {
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'member-card';
+            
+            const joinDate = new Date(user.profile.createdAt).toLocaleDateString();
+            const hasSignature = user.profile.signature ? true : false;
+            const agreementStatus = user.profile.agreementAccepted ? 'Signed' : 'Pending';
+
+            memberDiv.innerHTML = `
+              <div class="member-header">
+                <div class="member-name">${user.profile.fullName || user.username}</div>
+                <div class="member-type">${user.profile.memberType || 'Individual'}</div>
+              </div>
+              <div class="member-details">
+                <div class="detail-item">
+                  <span class="detail-label">Username:</span> ${user.username}
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Email:</span> ${user.profile.email || 'Not provided'}
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Phone:</span> ${user.profile.phone || 'Not provided'}
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Address:</span> ${user.profile.address || 'Not provided'}
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Member Since:</span> ${joinDate}
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Agreement Status:</span> 
+                  <span style="color: ${agreementStatus === 'Signed' ? '#2e8b57' : '#dc3545'}; font-weight: bold;">
+                    ${agreementStatus}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Newsletter:</span> ${user.profile.newsletterConsent ? 'Yes' : 'No'}
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Interests:</span> ${user.profile.interests || 'None specified'}
+                </div>
+              </div>
+              ${hasSignature ? `
+                <div style="margin-top: 15px;">
+                  <span class="detail-label">Digital Signature:</span><br>
+                  <img src="${user.profile.signature}" class="signature-preview" 
+                       onclick="viewSignature('${user.profile.signature}', '${user.profile.fullName || user.username}')"
+                       title="Click to view full signature">
+                </div>
+              ` : '<div style="margin-top: 15px; color: #dc3545;">No signature on file</div>'}
+            `;
+            
+            container.appendChild(memberDiv);
+          });
+
+          // Update statistics
+          document.getElementById('total-members').textContent = users.length;
+          document.getElementById('signed-agreements').textContent = users.filter(u => u.profile.agreementAccepted).length;
+        })
+        .catch(error => {
+          console.error('Error loading members:', error);
+          document.getElementById('members-list').innerHTML = '<p style="color: red;">Error loading members.</p>';
+        });
+    }
+
+    function loadOrders() {
+      fetch('http://localhost:3000/orders')
+        .then(res => res.json())
+        .then(orders => {
+          const container = document.getElementById('orders-list');
+          
+          if (orders.length === 0) {
+            container.innerHTML = '<p>No orders found.</p>';
+            return;
+          }
+
+          container.innerHTML = '';
+          
+          // Show only recent orders (last 10)
+          const recentOrders = orders.slice(-10).reverse();
+          
+          recentOrders.forEach(order => {
+            const orderDiv = document.createElement('div');
+            orderDiv.className = 'order-item';
+            
+            const orderDate = new Date(order.date || order.createdAt).toLocaleDateString();
+            const status = order.status || 'pending';
+            const total = order.cart ? order.cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0) : 0;
+
+            orderDiv.innerHTML = `
+              <div class="order-header">
+                <div>
+                  <strong>Order #${order.id}</strong>
+                  <div style="color: #666; font-size: 0.9em;">${orderDate}</div>
+                </div>
+                <div class="status-badge status-${status}">${status.toUpperCase()}</div>
+              </div>
+              <div>
+                <strong>Customer:</strong> ${order.name || 'N/A'}<br>
+                <strong>Email:</strong> ${order.email || 'N/A'}<br>
+                <strong>Address:</strong> ${order.address || 'N/A'}<br>
+                <strong>Total:</strong> $${total.toFixed(2)}
+              </div>
+              <div style="margin-top: 10px;">
+                <button class="btn" onclick="updateOrderStatus('${order.id}', 'confirmed')">Mark Confirmed</button>
+                <button class="btn" onclick="updateOrderStatus('${order.id}', 'delivered')">Mark Delivered</button>
+              </div>
+            `;
+            
+            container.appendChild(orderDiv);
+          });
+
+          // Update statistics
+          document.getElementById('total-orders').textContent = orders.length;
+          document.getElementById('pending-orders').textContent = orders.filter(o => o.status === 'pending').length;
+        })
+        .catch(error => {
+          console.error('Error loading orders:', error);
+          document.getElementById('orders-list').innerHTML = '<p style="color: red;">Error loading orders.</p>';
+        });
+    }
+
+    function viewSignature(signatureData, memberName) {
+      currentSignatureData = signatureData;
+      document.getElementById('signature-full').src = signatureData;
+      document.getElementById('signature-modal').style.display = 'flex';
+    }
+
+    function closeSignatureModal() {
+      document.getElementById('signature-modal').style.display = 'none';
+    }
+
+    function downloadSignature() {
+      if (currentSignatureData) {
+        const link = document.createElement('a');
+        link.download = 'member-signature.png';
+        link.href = currentSignatureData;
+        link.click();
+      }
+    }
+
+    function updateOrderStatus(orderId, newStatus) {
+      // In a real implementation, this would make an API call to update the order
+      alert(`Order ${orderId} would be updated to ${newStatus} status.\nThis would be implemented with a proper API endpoint.`);
+    }
+
+    function refreshData() {
+      loadMembers();
+      loadOrders();
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('signature-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSignatureModal();
+      }
+    });
+
+    // Initialize on page load
+    window.onload = function() {
+      loadMembers();
+      loadOrders();
+    };
+  </script>
+</body>
+</html>

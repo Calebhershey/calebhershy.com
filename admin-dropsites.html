@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Dropsite Management - Grazin Acres Admin</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .access-denied {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f5f5f5;
+      flex-direction: column;
+    }
+    .access-denied-card {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 400px;
+    }
+    .sidebar {
+      width: 250px;
+      background: #2e8b57;
+      color: white;
+      padding: 20px 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      margin-bottom: 20px;
+    }
+    .sidebar-header .back-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+    .sidebar-header .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar-menu li {
+      margin: 0;
+    }
+    .sidebar-menu a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      transition: background 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 20px;
+    }
+    .content-header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .content-section {
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    .section-header {
+      background: #2e8b57;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px 8px 0 0;
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-content {
+      padding: 20px;
+    }
+    .btn {
+      background: #2e8b57;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      transition: all 0.2s;
+      font-size: 0.9em;
+    }
+    .btn:hover {
+      background: #256b45;
+      transform: translateY(-1px);
+    }
+    .btn-primary { background: #007bff; }
+    .btn-success { background: #28a745; }
+    .btn-warning { background: #ffc107; color: #212529; }
+    .btn-danger { background: #dc3545; }
+    .btn-secondary { background: #6c757d; }
+    .dropsite-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .dropsite-card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+    }
+    .dropsite-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+    .dropsite-card h3 {
+      color: #2e8b57;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    .dropsite-info {
+      margin-bottom: 15px;
+    }
+    .dropsite-info p {
+      margin: 8px 0;
+      font-size: 0.9em;
+    }
+    .dropsite-status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .status-active { background: #d4edda; color: #155724; }
+    .status-inactive { background: #f8d7da; color: #721c24; }
+    .status-maintenance { background: #fff3cd; color: #856404; }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      width: 90%;
+    }
+    .modal-header {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #2e8b57;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .schedule-section {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    .schedule-day {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .schedule-day label {
+      margin: 0;
+      min-width: 80px;
+    }
+    .time-input {
+      width: 100px;
+    }
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-style: italic;
+    }
+    .dropsite-map {
+      background: #e3f2fd;
+      border: 2px solid #2196f3;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      text-align: center;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border-left: 4px solid #2e8b57;
+    }
+    .stat-number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #2e8b57;
+      margin-bottom: 5px;
+    }
+    .stat-label {
+      color: #666;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <!-- Access Control Check -->
+  <div id="access-check" class="access-denied" style="display: none;">
+    <div class="access-denied-card">
+      <h2 style="color: #dc3545; margin-bottom: 20px;">🔒 Access Denied</h2>
+      <p style="color: #666; margin-bottom: 20px;">You need admin privileges to access this area.</p>
+      <button onclick="window.location.href='Grazin Acres.html'" style="background: #2e8b57; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Go to Main Site</button>
+      <button onclick="window.location.href='login.html'" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer;">Login</button>
+    </div>
+  </div>
+
+  <div id="admin-content" class="admin-layout" style="display: none;">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>Grazin Acres</h2>
+        <p>Dropsite Management</p>
+        <div id="admin-user-info" style="font-size: 0.9em; opacity: 0.8; margin: 10px 0;"></div>
+        <button class="back-btn" onclick="window.location.href='admin-database.html'">← Back to Admin Dashboard</button>
+        <button class="back-btn" onclick="window.location.href='Grazin Acres.html'">← Main Site</button>
+        <button class="back-btn" onclick="logoutAdmin()" style="background: #dc3545; margin-top: 5px;">🔒 Logout Admin</button>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#" onclick="showSection('dropsite-overview')" class="active">📊 Overview</a></li>
+        <li><a href="#" onclick="showSection('dropsite-management')">📍 Manage Dropsites</a></li>
+        <li><a href="#" onclick="showSection('dropsite-schedules')">📅 Schedules</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="content-header">
+        <h1 id="page-title">Dropsite Management</h1>
+        <p id="page-description">Manage pickup and delivery locations for customers</p>
+      </div>
+
+      <!-- Overview Section -->
+      <div id="dropsite-overview" class="content-section active">
+        <div class="section-header">
+          <h2>Dropsite Overview</h2>
+          <button class="btn btn-success" onclick="addNewDropsite()">📍 Add New Dropsite</button>
+        </div>
+        <div class="section-content">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="total-dropsites">0</div>
+              <div class="stat-label">Total Dropsites</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="active-dropsites">0</div>
+              <div class="stat-label">Active Dropsites</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="weekly-pickups">0</div>
+              <div class="stat-label">Weekly Pickups</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="total-customers">0</div>
+              <div class="stat-label">Customers Using Dropsites</div>
+            </div>
+          </div>
+          
+          <div id="dropsites-grid" class="dropsite-grid">
+            <p>Loading dropsites...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropsite Management Section -->
+      <div id="dropsite-management" class="content-section">
+        <div class="section-header">
+          <h2>Manage Dropsites</h2>
+          <div>
+            <button class="btn btn-success" onclick="addNewDropsite()">📍 Add New Dropsite</button>
+            <button class="btn btn-warning" onclick="refreshDropsites()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="section-content">
+          <div id="management-dropsites-grid" class="dropsite-grid">
+            <p>Loading dropsites...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schedules Section -->
+      <div id="dropsite-schedules" class="content-section">
+        <div class="section-header">
+          <h2>Dropsite Schedules</h2>
+          <button class="btn btn-primary" onclick="generateScheduleReport()">📊 Generate Report</button>
+        </div>
+        <div class="section-content">
+          <div id="schedules-container">
+            <p>Loading schedules...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Dropsite Modal -->
+  <div id="dropsite-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Add New Dropsite</h3>
+        <button class="btn btn-secondary" onclick="closeModal('dropsite-modal')" style="float: right;">Close</button>
+      </div>
+      <form id="dropsite-form">
+        <div class="form-group">
+          <label>Dropsite Name *</label>
+          <input type="text" id="dropsite-name" required placeholder="e.g., Downtown Community Center">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Contact Person</label>
+            <input type="text" id="contact-person" placeholder="Site coordinator name">
+          </div>
+          <div class="form-group">
+            <label>Contact Phone</label>
+            <input type="tel" id="contact-phone" placeholder="(555) 123-4567">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Address *</label>
+          <input type="text" id="dropsite-address" required placeholder="Street address">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="dropsite-city" required>
+          </div>
+          <div class="form-group">
+            <label>ZIP Code *</label>
+            <input type="text" id="dropsite-zip" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="dropsite-description" rows="3" placeholder="Special instructions, landmarks, etc."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Status</label>
+            <select id="dropsite-status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Capacity (max orders)</label>
+            <input type="number" id="dropsite-capacity" min="1" value="50">
+          </div>
+        </div>
+
+        <div class="schedule-section">
+          <h4>Pickup Schedule</h4>
+          <div class="schedule-day">
+            <input type="checkbox" id="monday-enabled">
+            <label for="monday-enabled">Monday</label>
+            <input type="time" id="monday-start" class="time-input" value="16:00">
+            <span>to</span>
+            <input type="time" id="monday-end" class="time-input" value="18:00">
+          </div>
+          <div class="schedule-day">
+            <input type="checkbox" id="tuesday-enabled">
+            <label for="tuesday-enabled">Tuesday</label>
+            <input type="time" id="tuesday-start" class="time-input" value="16:00">
+            <span>to</span>
+            <input type="time" id="tuesday-end" class="time-input" value="18:00">
+          </div>
+          <div class="schedule-day">
+            <input type="checkbox" id="wednesday-enabled">
+            <label for="wednesday-enabled">Wednesday</label>
+            <input type="time" id="wednesday-start" class="time-input" value="16:00">
+            <span>to</span>
+            <input type="time" id="wednesday-end" class="time-input" value="18:00">
+          </div>
+          <div class="schedule-day">
+            <input type="checkbox" id="thursday-enabled">
+            <label for="thursday-enabled">Thursday</label>
+            <input type="time" id="thursday-start" class="time-input" value="16:00">
+            <span>to</span>
+            <input type="time" id="thursday-end" class="time-input" value="18:00">
+          </div>
+          <div class="schedule-day">
+            <input type="checkbox" id="friday-enabled">
+            <label for="friday-enabled">Friday</label>
+            <input type="time" id="friday-start" class="time-input" value="16:00">
+            <span>to</span>
+            <input type="time" id="friday-end" class="time-input" value="18:00">
+          </div>
+          <div class="schedule-day">
+            <input type="checkbox" id="saturday-enabled">
+            <label for="saturday-enabled">Saturday</label>
+            <input type="time" id="saturday-start" class="time-input" value="09:00">
+            <span>to</span>
+            <input type="time" id="saturday-end" class="time-input" value="12:00">
+          </div>
+          <div class="schedule-day">
+            <input type="checkbox" id="sunday-enabled">
+            <label for="sunday-enabled">Sunday</label>
+            <input type="time" id="sunday-start" class="time-input" value="09:00">
+            <span>to</span>
+            <input type="time" id="sunday-end" class="time-input" value="12:00">
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+          <button type="submit" class="btn btn-success">💾 Save Dropsite</button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('dropsite-modal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dropsite Details Modal -->
+  <div id="dropsite-details-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Dropsite Details</h3>
+        <button class="btn btn-secondary" onclick="closeModal('dropsite-details-modal')" style="float: right;">Close</button>
+      </div>
+      <div id="dropsite-details-content">
+        <!-- Dropsite details will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check admin access before loading the page
+    function checkAdminAccess() {
+      const isAdminAuthenticated = localStorage.getItem('adminAuthenticated');
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      
+      if (!isAdminAuthenticated || !loggedInUser) {
+        document.getElementById('access-check').style.display = 'flex';
+        document.getElementById('admin-content').style.display = 'none';
+        return false;
+      }
+      
+      document.getElementById('access-check').style.display = 'none';
+      document.getElementById('admin-content').style.display = 'flex';
+      
+      // Show admin user info
+      const adminUser = localStorage.getItem('adminUser') || localStorage.getItem('loggedInUser');
+      const adminUserInfo = document.getElementById('admin-user-info');
+      if (adminUserInfo && adminUser) {
+        adminUserInfo.textContent = `Logged in as: ${adminUser}`;
+      }
+      
+      return true;
+    }
+
+    // Check access on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      if (checkAdminAccess()) {
+        // Initialize dropsite management
+        dropsiteManager.init();
+      }
+    });
+
+    function logoutAdmin() {
+      localStorage.removeItem('adminAuthenticated');
+      localStorage.removeItem('adminUser');
+      alert('Admin session ended.');
+      window.location.href = 'Grazin Acres.html';
+    }
+
+    // Global functions for section navigation
+    function showSection(sectionId) {
+      // Hide all sections
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Show selected section
+      document.getElementById(sectionId).classList.add('active');
+      
+      // Update sidebar active state
+      document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Update page title
+      const titles = {
+        'dropsite-overview': 'Dropsite Overview',
+        'dropsite-management': 'Manage Dropsites',
+        'dropsite-schedules': 'Dropsite Schedules'
+      };
+      
+      const descriptions = {
+        'dropsite-overview': 'Overview of all pickup and delivery locations',
+        'dropsite-management': 'Add, edit, and manage dropsite locations',
+        'dropsite-schedules': 'View and manage pickup schedules'
+      };
+      
+      document.getElementById('page-title').textContent = titles[sectionId] || 'Dropsite Management';
+      document.getElementById('page-description').textContent = descriptions[sectionId] || 'Manage pickup and delivery locations for customers';
+    }
+
+    // Modal functions
+    function showModal(modalId) {
+      document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+  </script>
+
+  <script src="admin-dropsites.js"></script>
+</body>
+</html>

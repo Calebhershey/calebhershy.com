@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2e8b57;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #2e8b57;
+      padding: 10px 20px;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header-buttons button {
+      background: white;
+      color: #2e8b57;
+      border: none;
+      padding: 8px 16px;
+      margin-left: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .header-buttons button:hover {
+      background: #e0e0e0;
+    }
+    .cart-icon {
+      font-size: 24px;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+    .content {
+      margin-top: 100px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 32px 24px;
+    }
+    .checkout-title {
+      color: #2e8b57;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .checkout-form label {
+      display: block;
+      margin-bottom: 6px;
+      color: #2e8b57;
+      font-weight: bold;
+    }
+    .checkout-form input, .checkout-form textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .checkout-form button {
+      width: 100%;
+      background: #2e8b57;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 0;
+      font-size: 1.1em;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .checkout-form button:hover {
+      background: #256b45;
+    }
+    .order-summary {
+      margin-bottom: 24px;
+      background: #f6fff6;
+      border-radius: 6px;
+      padding: 16px;
+      color: #2e8b57;
+    }
+    .order-summary h3 {
+      margin-top: 0;
+    }
+    .order-summary ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+    .order-summary li {
+      margin-bottom: 6px;
+    }
+    .order-total {
+      text-align: right;
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <img src="Logo.jpeg" alt="Grazin Acres Logo" style="height: 50px; width: auto; border-radius: 8px;">
+      <span style="font-size: 1.5em; font-weight: bold;">Grazin Acres</span>
+      <div class="header-buttons">
+        <button onclick="location.href='Grazin Acres.html'">Home</button>
+        <button onclick="location.href='shopping.html'">Shopping</button>
+        <button onclick="location.href='About.html'">About</button>
+        <button onclick="location.href='Contact.html'">Contact</button>
+      </div>
+      <div class="cart-icon" onclick="location.href='shopping.html'" style="position:relative;">
+        🛒
+        <span id="cart-quantity" style="display:none;position:absolute;top:-8px;right:-12px;background:#ff5252;color:white;border-radius:50%;padding:2px 7px;font-size:0.8em;font-weight:bold;"></span>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <h2 class="checkout-title">Checkout</h2>
+    <div class="order-summary" id="order-summary">
+      <h3>Order Summary</h3>
+      <ul id="summary-list">
+        <!-- Items will be injected here -->
+      </ul>
+      <div class="order-total" id="order-total"></div>
+    </div>
+    <form class="checkout-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required>
+
+      <div style="margin: 20px 0; padding: 15px; background: #f0f8ff; border-radius: 8px; border: 2px solid #4CAF50;">
+        <h3 style="margin-top: 0; color: #2e8b57;">🚚 Delivery Method</h3>
+        
+        <div style="margin-bottom: 15px;">
+          <input type="radio" id="delivery-home" name="delivery-method" value="home" checked>
+          <label for="delivery-home" style="margin-left: 8px; font-weight: normal;">Home Delivery</label>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <input type="radio" id="delivery-dropsite" name="delivery-method" value="dropsite">
+          <label for="delivery-dropsite" style="margin-left: 8px; font-weight: normal;">Pickup at Dropsite</label>
+        </div>
+      </div>
+
+      <div id="home-delivery-section">
+        <label for="address">Shipping Address</label>
+        <textarea id="address" rows="3" required></textarea>
+      </div>
+
+      <div id="dropsite-section" style="display: none;">
+        <label for="dropsite-select">Select Pickup Location</label>
+        <select id="dropsite-select" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;">
+          <option value="">Choose a dropsite...</option>
+        </select>
+        <div id="dropsite-info" style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 4px; display: none;">
+          <!-- Dropsite details will be shown here -->
+        </div>
+      </div>
+
+      <label for="card">Credit Card Number</label>
+      <input type="text" id="card" maxlength="19" placeholder="1234 5678 9012 3456" required>
+
+      <button type="submit">Place Order</button>
+    </form>
+    <div id="confirmation" style="display:none; color:#2e8b57; text-align:center; margin-top:24px; font-size:1.2em;">
+      Thank you for your order!
+    </div>
+  </div>
+  <script>
+    // Example prices for products (match names from shopping.html)
+    const prices = {
+      "Farm Fresh Eggs": 6.00,
+      "Raw Local Honey": 10.00,
+      "Heirloom Tomatoes": 5.00
+    };
+
+    function getCart() {
+      return JSON.parse(localStorage.getItem('cart')) || [];
+    }
+
+    // Render order summary
+    function renderOrderSummary() {
+      const cart = getCart();
+      const list = document.getElementById('summary-list');
+      const totalDiv = document.getElementById('order-total');
+      let total = 0;
+      list.innerHTML = '';
+      cart.forEach(item => {
+        const price = prices[item.name] || 0;
+        total += price * item.quantity;
+        const li = document.createElement('li');
+        li.textContent = `${item.name} x${item.quantity} - $${(price * item.quantity).toFixed(2)}`;
+        list.appendChild(li);
+      });
+      totalDiv.textContent = `Total: $${total.toFixed(2)}`;
+    }
+
+    renderOrderSummary();
+
+    // Handle form submission
+    document.querySelector('.checkout-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const card = document.getElementById('card').value;
+      const cart = getCart();
+      
+      // Get delivery method and details
+      const deliveryMethod = document.querySelector('input[name="delivery-method"]:checked').value;
+      let deliveryInfo = {};
+      
+      if (deliveryMethod === 'home') {
+        const address = document.getElementById('address').value;
+        if (!address.trim()) {
+          alert('Please enter a shipping address.');
+          return;
+        }
+        deliveryInfo = {
+          method: 'home',
+          address: address
+        };
+      } else {
+        const dropsiteSelect = document.getElementById('dropsite-select');
+        if (!dropsiteSelect.value) {
+          alert('Please select a pickup dropsite.');
+          return;
+        }
+        
+        const selectedOption = dropsiteSelect.options[dropsiteSelect.selectedIndex];
+        const dropsite = JSON.parse(selectedOption.dataset.dropsite);
+        
+        deliveryInfo = {
+          method: 'dropsite',
+          dropsite: {
+            id: dropsite.id,
+            name: dropsite.name,
+            address: `${dropsite.address}, ${dropsite.city} ${dropsite.zipCode}`,
+            contactPerson: dropsite.contactPerson,
+            contactPhone: dropsite.contactPhone,
+            schedule: dropsite.schedule
+          }
+        };
+      }
+
+      // Calculate total
+      let total = 0;
+      cart.forEach(item => {
+        const price = prices[item.name] || 0;
+        total += price * item.quantity;
+      });
+
+      console.log('Submitting order:', { name, email, cart, total, delivery: deliveryInfo }); // Debug log
+
+      // Send order to backend
+      fetch('http://localhost:3000/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer: name,
+          name: name,
+          email: email,
+          cart: cart,
+          total: total,
+          delivery: deliveryInfo,
+          grandTotal: total,
+          date: new Date().toISOString(),
+          status: 'pending'
+        })
+      })
+      .then(async res => {
+        const data = await res.json();
+        console.log('Order response:', data); // Debug log
+        if (res.ok) {
+          localStorage.removeItem('cart');
+          document.querySelector('.checkout-form').style.display = 'none';
+          document.getElementById('order-summary').style.display = 'none';
+          
+          // Show confirmation with delivery details
+          const confirmationDiv = document.getElementById('confirmation');
+          let deliveryMessage = '';
+          
+          if (deliveryInfo.method === 'home') {
+            deliveryMessage = `Your order will be delivered to: ${deliveryInfo.address}`;
+          } else {
+            const dropsite = deliveryInfo.dropsite;
+            const scheduleText = getDropsiteScheduleText(dropsite.schedule);
+            deliveryMessage = `
+              <div style="margin-top: 15px; padding: 15px; background: #f0f8ff; border-radius: 8px; border: 2px solid #4CAF50;">
+                <strong>📍 Pickup Location:</strong> ${dropsite.name}<br>
+                <strong>📍 Address:</strong> ${dropsite.address}<br>
+                <strong>📅 Pickup Times:</strong> ${scheduleText}<br>
+                ${dropsite.contactPerson ? `<strong>👤 Contact:</strong> ${dropsite.contactPerson}` : ''}
+                ${dropsite.contactPhone ? `<br><strong>📞 Phone:</strong> ${dropsite.contactPhone}` : ''}
+              </div>
+            `;
+          }
+          
+          confirmationDiv.innerHTML = `
+            <h2 style="color: #2e8b57; margin-bottom: 20px;">✅ Thank you for your order!</h2>
+            <p style="font-size: 1.1em; margin-bottom: 15px;">Order Total: $${total.toFixed(2)}</p>
+            <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+              ${deliveryMessage}
+            </div>
+            <p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+              You will receive a confirmation email shortly.
+            </p>
+          `;
+          confirmationDiv.style.display = 'block';
+        } else {
+          console.error('Order submission failed:', data);
+          alert('Order submission failed: ' + (data.message || 'Unknown error'));
+        }
+      })
+      .catch(error => {
+        console.error('Network error:', error);
+        alert('There was a network error submitting your order. Please try again.');
+      });
+    });
+
+    // Authentication check
+    function checkAuthentication() {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      const authToken = localStorage.getItem('authToken');
+      
+      if (!loggedInUser && !authToken) {
+        alert('Please log in to complete your checkout.');
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Cart badge
+    function updateCartQuantity() {
+      const cart = getCart();
+      const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cartQuantitySpan = document.getElementById('cart-quantity');
+      if (cartQuantitySpan) {
+        cartQuantitySpan.textContent = totalQuantity;
+        cartQuantitySpan.style.display = totalQuantity > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userProfile');
+      localStorage.removeItem('currentUserId');
+      alert('You have been logged out successfully.');
+      window.location.href = 'login.html';
+    }
+
+    // Pre-fill form with member data
+    function prefillMemberData() {
+      const userProfile = localStorage.getItem('userProfile');
+      if (userProfile) {
+        try {
+          const profile = JSON.parse(userProfile);
+          if (profile.fullName) document.getElementById('name').value = profile.fullName;
+          if (profile.email) document.getElementById('email').value = profile.email;
+          if (profile.phone) document.getElementById('phone').value = profile.phone;
+          if (profile.address) document.getElementById('address').value = profile.address;
+          if (profile.city && profile.zipcode) {
+            document.getElementById('address').value += (profile.address ? ', ' : '') + profile.city + ', ' + profile.zipcode;
+          }
+        } catch (error) {
+          console.error('Error loading member data:', error);
+        }
+      }
+    }
+
+    // Initialize page
+    if (checkAuthentication()) {
+      updateCartQuantity();
+      prefillMemberData();
+      loadDropsites();
+      
+      // Show member info
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+        const memberInfo = document.createElement('div');
+        memberInfo.style.cssText = `
+          position: fixed;
+          top: 70px;
+          right: 20px;
+          background: rgba(255,255,255,0.9);
+          color: #2e8b57;
+          padding: 8px 12px;
+          border-radius: 5px;
+          z-index: 1001;
+          font-size: 0.9em;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        `;
+        memberInfo.innerHTML = `Member: ${loggedInUser} | <a href="#" onclick="logout()" style="color: #dc3545; text-decoration: none;">Logout</a>`;
+        document.body.appendChild(memberInfo);
+      }
+    }
+
+    // Dropsite management functions
+    function loadDropsites() {
+      try {
+        const dropsites = JSON.parse(localStorage.getItem('admin_dropsites')) || [];
+        const activeDropsites = dropsites.filter(d => d.status === 'active');
+        
+        const dropsiteSelect = document.getElementById('dropsite-select');
+        dropsiteSelect.innerHTML = '<option value="">Choose a dropsite...</option>';
+        
+        activeDropsites.forEach(dropsite => {
+          const option = document.createElement('option');
+          option.value = dropsite.id;
+          option.textContent = `${dropsite.name} - ${dropsite.city}`;
+          option.dataset.dropsite = JSON.stringify(dropsite);
+          dropsiteSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading dropsites:', error);
+      }
+    }
+
+    // Handle delivery method changes
+    document.addEventListener('DOMContentLoaded', function() {
+      const homeDelivery = document.getElementById('delivery-home');
+      const dropsiteDelivery = document.getElementById('delivery-dropsite');
+      const homeSection = document.getElementById('home-delivery-section');
+      const dropsiteSection = document.getElementById('dropsite-section');
+      const addressField = document.getElementById('address');
+      
+      function toggleDeliveryMethod() {
+        if (homeDelivery.checked) {
+          homeSection.style.display = 'block';
+          dropsiteSection.style.display = 'none';
+          addressField.required = true;
+          document.getElementById('dropsite-select').required = false;
+        } else {
+          homeSection.style.display = 'none';
+          dropsiteSection.style.display = 'block';
+          addressField.required = false;
+          document.getElementById('dropsite-select').required = true;
+        }
+      }
+      
+      homeDelivery.addEventListener('change', toggleDeliveryMethod);
+      dropsiteDelivery.addEventListener('change', toggleDeliveryMethod);
+      
+      // Handle dropsite selection
+      document.getElementById('dropsite-select').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const dropsiteInfo = document.getElementById('dropsite-info');
+        
+        if (selectedOption.dataset.dropsite) {
+          const dropsite = JSON.parse(selectedOption.dataset.dropsite);
+          showDropsiteInfo(dropsite);
+          dropsiteInfo.style.display = 'block';
+        } else {
+          dropsiteInfo.style.display = 'none';
+        }
+      });
+    });
+
+    function showDropsiteInfo(dropsite) {
+      const dropsiteInfo = document.getElementById('dropsite-info');
+      const scheduleText = getDropsiteScheduleText(dropsite.schedule);
+      
+      dropsiteInfo.innerHTML = `
+        <div style="margin-bottom: 10px;">
+          <strong>📍 ${dropsite.name}</strong><br>
+          <small>${dropsite.address}, ${dropsite.city} ${dropsite.zipCode}</small>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <strong>📅 Pickup Times:</strong><br>
+          <small>${scheduleText}</small>
+        </div>
+        ${dropsite.description ? `
+          <div style="margin-bottom: 10px;">
+            <strong>ℹ️ Special Instructions:</strong><br>
+            <small>${dropsite.description}</small>
+          </div>
+        ` : ''}
+        ${dropsite.contactPerson ? `
+          <div>
+            <strong>👤 Contact:</strong> ${dropsite.contactPerson}<br>
+            ${dropsite.contactPhone ? `<strong>📞 Phone:</strong> ${dropsite.contactPhone}` : ''}
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function getDropsiteScheduleText(schedule) {
+      const days = [];
+      const dayNames = {
+        monday: 'Monday',
+        tuesday: 'Tuesday',
+        wednesday: 'Wednesday',
+        thursday: 'Thursday',
+        friday: 'Friday',
+        saturday: 'Saturday',
+        sunday: 'Sunday'
+      };
+
+      for (const [day, info] of Object.entries(schedule)) {
+        if (info.enabled) {
+          days.push(`${dayNames[day]} ${info.start}-${info.end}`);
+        }
+      }
+
+      return days.length > 0 ? days.join(', ') : 'No pickup times available';
+    }
+  </script>
+  </script>
+</body>
+</html>

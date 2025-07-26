@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Handle CORS preflight requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ server.php [QSA,L]
+
+# Route all API requests to server.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^/(signup|login|profile|order|orders|debug|admin)
+RewriteRule ^(.*)$ server.php [QSA,L]
